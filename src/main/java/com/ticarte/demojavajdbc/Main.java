@@ -13,12 +13,14 @@ public class Main {
 
             Statement stmt = connection.createStatement();
 
+            System.out.println("Create table of films:");
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS films (" +
                     "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
                     "name LONGTEXT, " +
                     "year INT, " +
                     "director LONGTEXT)");
 
+            System.out.println("Insert films:");
             rows = stmt.executeUpdate("INSERT INTO films (name, year, director) " +
                     "VALUES ('The Shawshank Redemption', 1994, 'Frank Darabont')");
             System.out.println("Number of rows inserted: " + rows);
@@ -34,14 +36,22 @@ public class Main {
             rows = stmt.executeUpdate("INSERT INTO films (name, year, director) " +
                     "VALUES ('Pulp Fiction', 1994, 'Quentin Tarantino')");
             System.out.println("Number of rows inserted: " + rows);
-            rows = stmt.executeUpdate("INSERT INTO films (name, year, director) " +
-                    "VALUES ('Forrest Gump', 1994, 'Robert Zemeckis')");
-            System.out.println("Number of rows inserted: " + rows);
 
+            System.out.println("Insert films and get generated keys:");
+            rows = stmt.executeUpdate("INSERT INTO films (name, year, director) " +
+                    "VALUES ('Forrest Gump', 1994, 'Robert Zemeckis')", Statement.RETURN_GENERATED_KEYS);
+            System.out.println("Number of rows inserted: " + rows);
+            ResultSet rsKeys = stmt.getGeneratedKeys();
+            if (rsKeys.next()) {
+                System.out.println("Generated key: " + rsKeys.getInt(1));
+            }
+
+            System.out.println("Update films:");
             rows  = stmt.executeUpdate("UPDATE films SET director = 'Frank Darabont (*)' " +
                     "WHERE name = 'The Shawshank Redemption'");
             System.out.println("Number of rows updated: " + rows);
 
+            System.out.println("Delete films:");
             rows = stmt.executeUpdate("DELETE FROM films " +
                     "WHERE name = 'The Godfather'");
             System.out.println("Number of rows deleted: " + rows);
@@ -81,6 +91,8 @@ public class Main {
                         rs.getString("director") + "]");
             }
 
+            rsKeys.close();
+            rs.close();
             stmt.close();
             connection.close();
         } catch (Exception e) {
