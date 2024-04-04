@@ -45,7 +45,7 @@ public class Main {
             System.out.println("Insert year of film:");
             int yearFilm = scanner.nextInt();
             System.out.println("Insert director of film:");
-            String directorFilm = scanner.next();
+            String directorFilm = scanner.nextLine();
             rows = stmt.executeUpdate("INSERT INTO films (name, year, director) " +
                     "VALUES ('" + nameFilm + "', " + yearFilm + ", '" + directorFilm + "')");
             System.out.println("Number of rows inserted: " + rows);
