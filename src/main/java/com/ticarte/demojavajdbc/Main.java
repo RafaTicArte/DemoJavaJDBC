@@ -44,8 +44,10 @@ public class Main {
             String nameFilm = scanner.nextLine();
             System.out.println("Insert year of film:");
             int yearFilm = scanner.nextInt();
+            scanner.nextLine(); // Clean return character from nextInt
             System.out.println("Insert director of film:");
             String directorFilm = scanner.nextLine();
+
             rows = stmt.executeUpdate("INSERT INTO films (name, year, director) " +
                     "VALUES ('" + nameFilm + "', " + yearFilm + ", '" + directorFilm + "')");
             System.out.println("Number of rows inserted: " + rows);
@@ -115,6 +117,27 @@ public class Main {
             String stmtSelectFilms = "SELECT * FROM films WHERE year >= ?";
             try (PreparedStatement prepareStmt = connection.prepareStatement(stmtSelectFilms);) {
                 prepareStmt.setInt(1, 1994);
+                // Depurando se puede visualizar la consulta preparada con sus valores.
+                try (ResultSet rs = prepareStmt.executeQuery();) {
+                    while (rs.next()) {
+                        System.out.println(rs.getInt("id") + ". " +
+                                rs.getString("name") + " (" +
+                                rs.getInt("year") + ") [" +
+                                rs.getString("director") + "]");
+                    }
+                } catch (SQLException e) {
+                    System.out.println("SQLException => " + e.getMessage());
+                }
+            } catch (SQLException e) {
+                System.out.println("SQLException => " + e.getMessage());
+            }
+
+            System.out.println("List of films from 1994 with prepared statement:");
+            String stmtSelectFilmsByName = "SELECT * FROM films WHERE name LIKE ?";
+            System.out.println("Insert name of film to search:");
+            String nameSearchFill = scanner.nextLine();
+            try (PreparedStatement prepareStmt = connection.prepareStatement(stmtSelectFilmsByName);) {
+                prepareStmt.setString(1, "%" + nameSearchFill + "%");
                 // Depurando se puede visualizar la consulta preparada con sus valores.
                 try (ResultSet rs = prepareStmt.executeQuery();) {
                     while (rs.next()) {
